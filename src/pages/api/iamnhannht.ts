@@ -1,39 +1,175 @@
-import {NextRequest} from "next/server";
 import {NextApiRequest, NextApiResponse} from "next";
+import GithubColors from "@/data/colors.json"
+
+async function fetchGithubUserRepoData(username: string, key = "") {
+    const config = key !== "" ? {
+        headers: {
+            Authorization: `Bearer ${key}`
+        }
+    } : {}
+    const userData = await fetch(`https://api.github.com/users/${username}/repos`, config)
+    const json = await userData.json()
+    const stars = json.reduce((totalStars: number, repo: any) => totalStars + repo.stargazers_count, 0)
+    const issues = json.reduce((totalIssues: number, repo: any) => totalIssues + repo.open_issues_count, 0)
+    const languages = new Map<string, number>()
+    json.forEach((repo: any) => {
+        const language = repo.language
+        if (language) {
+            languages.set(language, (languages.get(language) || 0) + 1)
+        }
+    })
+    return {
+        stars,
+        issues,
+        languages
+    }
+}
+
+async function fetchGithubUserData(username: string, key = "") {
+    const config = key !== "" ? {
+        headers: {
+            Authorization: `Bearer ${key}`
+        }
+    } : {}
+    const userData = await fetch(`https://api.github.com/users/${username}`, config)
+    const json = await userData.json()
+    const followers = json.followers
+    const repos = json.public_repos
+    return {
+        followers,
+        repos
+    }
+}
+
+async function fetchGithubEventsData(username: string, key = "") {
+    const config = key !== "" ? {
+        headers: {
+            Authorization: `Bearer ${key}`
+        }
+    } : {}
+    const userData = await fetch(`https://api.github.com/users/${username}/events`, {})
+    const json = await userData.json()
+
+    const commits = json.reduce((totalCommits: number, event: any) => {
+        if (event.type === "PushEvent") {
+            totalCommits += event.payload.commits.length
+        }
+        return totalCommits
+    }, 0)
+    console.log(commits)
+    return {
+        commits
+    }
+}
+
+async function generateCardSVG(stat: number,
+                               unit: string,
+                               x: number,
+                               y: number,
+                               width: number,
+                               height: number) {
+
+    let svg = ` 
+ <g class="card">
+ 
+    <rect class="cardContainer" x="${x}%" y="${y}%" width="${width}%" height="${height}%" fill="white" >
+     
+     </rect>
+    <text class="statNumber"
+     x="${x + width / 3}%" y="${y + height / 2}%"
+      text-anchor="middle" alignment-baseline="middle" font-size="60" fill="transparent" stroke="url(#mainGradient)" stroke-dasharray="100" stroke-dashoffset="100"> 
+${stat}
+<animate id="strokeDraw" attributeName="stroke-dashoffset" from="100" to="0" dur="2s" fill="freeze" begin="0s" />
+<animate id="hideStroke" attributeName="stroke" from="url(#mainGradient)" to="transparent" dur="0.5s" fill="freeze" begin="strokeDraw.end" />
+<animate id="fill" attributeName="fill" from="transparent" to="indigo" dur="1s" fill="freeze" begin="hideStroke.end" />
+     </text>
+    <text class="unit"
+     x="${x + width * 2 / 3}%" y="${y + height / 2}%"
+      font-size="40" text-anchor="middle" alignment-baseline="middle" fill="white" >
+${unit}
+<animate
+id="unitFill"
+attributeName="fill"
+from="white"
+to="#454443"
+dur="1s"
+begin="fill.end"
+fill="freeze"
+/>
+
+</text> 
+</g>
+    `
+    return svg
+}
+
+
 function generateCaroBackground(row: number, col: number) {
     let result = ""
     for (let r = 0; r < row; r++) {
         for (let c = 0; c < col; c++) {
 //language=html
             const slot = `
-                <rect class="slot" width="${100 / col}%" height="${100 / row}%" 
-                      id="slot-${r}-${c}"
-                      x="${c*100/col}%"
-                      y="${r*100/row}%"
+                <rect class="slot" width="${100 / col}%" height="${100 / row}%"
+                      id="slot${r}${c}"
+                      x="${c * 100 / col}%"
+                      y="${r * 100 / row}%"
                       fill="white"
                 >
                     <animate
+                            id="slot${r}${c}Fill"
                             attributeName="fill"
-                            values="rgb(${c*100/col},${r*100/row},${(r+c) * 100/ (row + col)})"
-                            begin="${(row*r + c)/(row+col)}s"
+                            from="white"
+                            to="rgb(${c * 100 / col},${r * 100 / row},${(r + c) * 100 / (row + col)})"
+                            dur="1.5s"
+                            begin="${(r + c ) / (row + col)}s"
+                            fill="freeze"
+                    />
+                    <animate
+                            id="slot${r}${c}StartGlowing"
+                            attributeName="fill"
+                            from="rgb(${c * 100 / col},${r * 100 / row},${(r + c) * 100 / (row + col)})"
+                            to="white"
+                            dur="1s"
+                            begin="slot${r}${c}Fill.end + 5s; slot${r}${c}StartGlowing.end + 5s"
+                            fill="freeze"
                         />
-                    
-                    
+
+                    <animate
+                            id="slot${r}${c}EndGlowing"
+                            attributeName="fill"
+                            from="white"
+                            to="rgb(${c * 100 / col},${r * 100 / row},${(r + c) * 100 / (row + col)})"
+                            dur="1s"
+                            begin="slot${r}${c}StartGlowing.end"
+                            fill="freeze"
+                    />
                 </rect> `
-                      // fill="rgb(${c*100/col},${r*100/row},${(r+c) * 100/ (row + col)})"
-                      // fill="rgb(${calculateRGB(r,c)})"
             result += "\n"
             result += slot
         }
     }
     // console.log(result)
+
+
+    // <animate
+    //     id="slot${r}${c}Hallo"
+    // attributeName="fill"
+    // values="rgb(${c * 100 / col},${r * 100 / row},${(r + c) * 100 / (row + col)})"
+    //
+    //     />
     return result
 
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-    // language=html
-    const helloBanner = `
+
+async function generateSVG(stars: number,
+                           issues: number,
+                           commits: number,
+                           repos: number,
+                           followers: number,
+                           languages: Map<string, number>) {
+    return `
         <svg id="banner"
              viewBox="0 0 1000 1000"
              xmlns="http://www.w3.org/2000/svg"
@@ -44,10 +180,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
             <defs>
 
                 <linearGradient id="mainGradient">
-                    <stop offset="0%" stop-color="yellow"/>
+                    <stop offset="0%" stop-color="rose"/>
                     <stop offset="100%" stop-color="green"/>
                 </linearGradient>
             </defs>
+
 
             <filter id="blur">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blurred"/>
@@ -75,18 +212,25 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
 
             <g>
-                <rect class="card" width="35%" x="7.5%" y="10%" height="20%" fill="white"/>
-                <rect class="card" width="35%" x="7.5%" y="40%" height="20%" fill="white"/>
-                <rect class="card" width="35%" x="7.5%" y="70%" height="20%" fill="white"/>
+                ${await generateCardSVG(repos, "repos", 7.5, 10, 35, 20)}
+                ${await generateCardSVG(followers, "folks", 7.5, 40, 35, 20)}
+                ${await generateCardSVG(stars, "stars", 7.5, 70, 35, 20)}
             </g>
 
             <g>
-                <rect class="card" width="35%" x="57.5%" y="10%" height="20%" fill="white"/>
-                <rect class="card" width="35%" x="57.5%" y="40%" height="20%" fill="white"/>
-                <rect class="card" width="35%" x="57.5%" y="70%" height="20%" fill="white"/>
+                ${await generateCardSVG(commits, "commits", 57.5, 10, 35, 35)}
+                ${await generateCardSVG(issues, "issues", 57.5, 55, 35, 35)}
             </g>
         </svg>
     `
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const key = process.env.GITHUB_TOKEN
+    const {stars, issues, languages} = await fetchGithubUserRepoData("nhannht", key)
+    const {followers, repos} = await fetchGithubUserData("nhannht", key)
+    const {commits} = await fetchGithubEventsData("nhannht", key)
+    const svg = await generateSVG(stars, issues, commits, repos, followers, languages)
     res.setHeader('Content-Type', 'image/svg+xml')
-    res.status(200).send(helloBanner)
+    res.status(200).send(svg)
 }
