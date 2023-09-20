@@ -1,0 +1,3 @@
+#+title: Note
+
+* Id must be camelCase, not work with dash-case 💦
