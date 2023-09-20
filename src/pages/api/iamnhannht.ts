@@ -231,6 +231,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const {followers, repos} = await fetchGithubUserData("nhannht", key)
     const {commits} = await fetchGithubEventsData("nhannht", key)
     const svg = await generateSVG(stars, issues, commits, repos, followers, languages)
+    // convert to edge function in vercel
+    res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate')
     res.setHeader('Content-Type', 'image/svg+xml')
     res.status(200).send(svg)
 }
