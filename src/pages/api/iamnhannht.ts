@@ -93,14 +93,14 @@ async function generateCardSVG(stat: number,
        rx="5%"
         fill="transparent"
          stroke="url(#rainbowGradient)"
-       stroke-width="5"
+       stroke-width="2"
         stroke-dashoffset="100"
-        stroke-dasharray="100"
+        stroke-dasharray="150"
         >
     <animate id="cardContainerInner1StrokeDraw"
     attributeName="stroke-dashoffset"
     from="100"
-    to="-100"
+    to="-200"
     dur="2s"
     repeatCount="indefinite"
     />
