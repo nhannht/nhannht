@@ -72,37 +72,66 @@ async function generateCardSVG(stat: number,
     let svg = ` 
  <g class="card">
  
-    <rect class="cardContainer" x="${x}%" y="${y}%" width="${width}%" height="${height}%" fill="white" >
-     
-     </rect>
+    <rect class="cardContainer"
+     x="${x}%" y="${y}%" width="${width}%" height="${height}%"
+      rx="5%" fill="url(#blackPinkGradient)"
+       stroke-dashoffset="100"
+       stroke-dasharray="100"
+       >
+       <animate id="cardContainerReveal"
+         attributeName="opacity"
+            from="0"
+            to="1"
+            dur="1s"
+            begin="0s"
+            fill="freeze"
+            />
+</rect>
+    <rect class="cardContainerInner1"
+     x="${x + width * 0.05}%" y="${y + height * 0.05}%"
+      width="${width * 0.9}%" height="${height * 0.9}%"
+       rx="5%"
+        fill="transparent"
+         stroke="url(#rainbowGradient)"
+       stroke-width="5"
+        stroke-dashoffset="100"
+        stroke-dasharray="100"
+        >
+    <animate id="cardContainerInner1StrokeDraw"
+    attributeName="stroke-dashoffset"
+    from="100"
+    to="-100"
+    dur="2s"
+    repeatCount="indefinite"
+    />
+</rect>
     <text class="statNumber"
      x="${x + width / 3}%" y="${y + height / 2}%"
-      text-anchor="middle" alignment-baseline="middle" font-size="60" fill="transparent" stroke="url(#mainGradient)" stroke-dasharray="100" stroke-dashoffset="100"> 
+      text-anchor="middle" alignment-baseline="middle" 
+       font-size="60"  stroke="url(#rainbowGradient)" fill="transparent" stroke-dasharray="100" stroke-dashoffset="100"> 
 ${stat}
 <animate id="strokeDraw" attributeName="stroke-dashoffset" from="100" to="0" dur="2s" fill="freeze" begin="0s" />
 <animate id="hideStroke" attributeName="stroke" from="url(#mainGradient)" to="transparent" dur="0.5s" fill="freeze" begin="strokeDraw.end" />
-<animate id="fill" attributeName="fill" from="transparent" to="indigo" dur="1s" fill="freeze" begin="hideStroke.end" />
+<animate id="statReveal" attributeName="fill" from="transparent" to="white" dur="1s" fill="freeze" begin="hideStroke.end" />
      </text>
     <text class="unit"
      x="${x + width * 2 / 3}%" y="${y + height / 2}%"
-      font-size="40" text-anchor="middle" alignment-baseline="middle" fill="white" >
+      font-size="40" opacity="0" text-anchor="middle" alignment-baseline="middle" fill="white" >
 ${unit}
 <animate
-id="unitFill"
-attributeName="fill"
-from="white"
-to="#454443"
+id="unitReveal"
+attributeName="opacity"
+from="0"
+to="1"
 dur="1s"
-begin="fill.end"
+begin="statReveal.end"
 fill="freeze"
 />
-
 </text> 
 </g>
     `
     return svg
 }
-
 
 function generateCaroBackground(row: number, col: number) {
     let result = ""
@@ -179,9 +208,22 @@ async function generateSVG(stars: number,
             <!--            define filter and gradient -->
             <defs>
 
-                <linearGradient id="mainGradient">
-                    <stop offset="0%" stop-color="rose"/>
-                    <stop offset="100%" stop-color="green"/>
+                <linearGradient id="rainbowGradient">
+                    <stop offset="0%" stop-color="#FF0000"/>
+                    <stop offset="16.67%" stop-color="#FF7F00"/>
+                    <stop offset="33.33%" stop-color="#FFFF00"/>
+                    <stop offset="50%" stop-color="#00FF00"/>
+                    <stop offset="66.67%" stop-color="#0000FF"/>
+                    <stop offset="83.33%" stop-color="#4B0082"/>
+                    <stop offset="100%" stop-color="#8F00FF"/>
+                </linearGradient>
+                <linearGradient id="blackPinkGradient" x1="0" y1="0" x2="1" y2="1" >
+                    <stop offset="0%" stop-color="#000000"/>
+                    <stop offset="100%" stop-color="#FF00FF"/>
+                </linearGradient>
+                <linearGradient id="lightGreenGradient" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#00FF00"/>
+                    <stop offset="100%" stop-color="#FFFFFF"/>
                 </linearGradient>
             </defs>
 
