@@ -1,5 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import GithubColors from "@/data/colors.json"
+import * as fs from "fs";
+import {base} from "next/dist/build/webpack/config/blocks/base";
 
 async function fetchGithubUserRepoData(username: string, key = "") {
     const config = key !== "" ? {
@@ -56,7 +58,6 @@ async function fetchGithubEventsData(username: string, key = "") {
         }
         return totalCommits
     }, 0)
-    console.log(commits)
     return {
         commits
     }
@@ -198,6 +199,9 @@ async function generateSVG(stars: number,
                            repos: number,
                            followers: number,
                            languages: Map<string, number>) {
+
+    const font = fs.readFileSync("public/blackchancery64")
+    // convert to base64
     return `
         <svg id="banner"
              viewBox="0 0 1000 1000"
@@ -227,7 +231,8 @@ async function generateSVG(stars: number,
                 <style>
                 @font-face {
                     font-family: "Black Chancery";
-                    src: url("https://nhannht.vercel.app/BLKCHCRY.TTF");                
+                    src: url(data:font/ttf;charset=utf-8;base64,${font})
+                     format("truetype");
                 }
 </style>
             </defs>
