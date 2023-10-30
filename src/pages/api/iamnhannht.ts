@@ -105,7 +105,7 @@ async function generateCardSVG(stat: number,
     repeatCount="indefinite"
     />
 </rect>
-    <text class="statNumber"
+    <text class="statNumber" font-family="Black Chancery"
      x="${x + width / 3}%" y="${y + height / 2}%"
       text-anchor="middle" alignment-baseline="middle" 
        font-size="60"  stroke="url(#rainbowGradient)" fill="transparent" stroke-dasharray="100" stroke-dashoffset="100"> 
@@ -114,7 +114,7 @@ ${stat}
 <animate id="hideStroke" attributeName="stroke" from="url(#mainGradient)" to="transparent" dur="0.5s" fill="freeze" begin="strokeDraw.end" />
 <animate id="statReveal" attributeName="fill" from="transparent" to="white" dur="1s" fill="freeze" begin="hideStroke.end" />
      </text>
-    <text class="unit"
+    <text class="unit" font-family="Black Chancery"
      x="${x + width * 2 / 3}%" y="${y + height / 2}%"
       font-size="40" opacity="0" text-anchor="middle" alignment-baseline="middle" fill="white" >
 ${unit}
@@ -151,7 +151,7 @@ function generateCaroBackground(row: number, col: number) {
                             from="white"
                             to="rgb(${c * 100 / col},${r * 100 / row},${(r + c) * 100 / (row + col)})"
                             dur="1.5s"
-                            begin="${(r + c ) / (row + col)}s"
+                            begin="${(r + c) / (row + col)}s"
                             fill="freeze"
                     />
                     <animate
@@ -162,7 +162,7 @@ function generateCaroBackground(row: number, col: number) {
                             dur="1s"
                             begin="slot${r}${c}Fill.end + 5s; slot${r}${c}StartGlowing.end + 5s"
                             fill="freeze"
-                        />
+                    />
 
                     <animate
                             id="slot${r}${c}EndGlowing"
@@ -207,7 +207,6 @@ async function generateSVG(stars: number,
         >
             <!--            define filter and gradient -->
             <defs>
-
                 <linearGradient id="rainbowGradient">
                     <stop offset="0%" stop-color="#FF0000"/>
                     <stop offset="16.67%" stop-color="#FF7F00"/>
@@ -225,7 +224,14 @@ async function generateSVG(stars: number,
                     <stop offset="0%" stop-color="#00FF00"/>
                     <stop offset="100%" stop-color="#FFFFFF"/>
                 </linearGradient>
+                <style>
+                @font-face {
+                    font-family: "Black Chancery";
+                    src: url("/BLKCHCRY.TTF");                
+                }
+</style>
             </defs>
+           
 
 
             <filter id="blur">
