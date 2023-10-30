@@ -234,10 +234,8 @@ async function generateSVG(stars: number,
                     src: url(data:font/ttf;charset=utf-8;base64,${font})
                      format("truetype");
                 }
-</style>
+                </style>
             </defs>
-           
-
 
             <filter id="blur">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blurred"/>
