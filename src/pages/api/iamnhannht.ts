@@ -227,7 +227,7 @@ async function generateSVG(stars: number,
                 <style>
                 @font-face {
                     font-family: "Black Chancery";
-                    src: url("/BLKCHCRY.TTF");                
+                    src: url("https://nhannht.vercel.app/BLKCHCRY.TTF");                
                 }
 </style>
             </defs>
