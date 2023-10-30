@@ -2,6 +2,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 import GithubColors from "@/data/colors.json"
 import * as fs from "fs";
 import {base} from "next/dist/build/webpack/config/blocks/base";
+import path from "path";
 
 async function fetchGithubUserRepoData(username: string, key = "") {
     const config = key !== "" ? {
@@ -199,8 +200,7 @@ async function generateSVG(stars: number,
                            repos: number,
                            followers: number,
                            languages: Map<string, number>) {
-
-    const font = fs.readFileSync("public/blackchancery64")
+    const font = fs.readFileSync(path.resolve(process.cwd() + "/public", "blackchancery64"))
     // convert to base64
     return `
         <svg id="banner"
