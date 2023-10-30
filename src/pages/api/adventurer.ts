@@ -8,8 +8,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const minotaurStandingImage = await fs.readFile(path.resolve(process.cwd() + "/public", "minotaur-standing.base64"))
     const fontBlackChancery = await fs.readFile(path.resolve(process.cwd() + "/public", "blackchancery64"))
     const forestBackground = await fs.readFile(path.resolve(process.cwd() + "/public", "forest-bottom.base64"))
+    //@ts-ignore
     const programmingAdventureDay = new Date() - new Date("2018-08-01")
-    const lifeAdventureDay = new Date() - new Date("1997-11-06")
+
     const svg = `
     <svg id="aventurer"
       viewBox="0 0 1000 300"
