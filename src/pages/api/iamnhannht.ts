@@ -11,6 +11,7 @@ async function fetchGithubUserRepoData(username: string, key = "") {
         }
     } : {}
     const userData = await fetch(`https://api.github.com/users/${username}/repos`, config)
+
     const json = await userData.json()
     const stars = json.reduce((totalStars: number, repo: any) => totalStars + repo.stargazers_count, 0)
     const issues = json.reduce((totalIssues: number, repo: any) => totalIssues + repo.open_issues_count, 0)
@@ -283,7 +284,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const {commits} = await fetchGithubEventsData("nhannht", key)
     const svg = await generateSVG(stars, issues, commits, repos, followers, languages)
     // convert to edge function in vercel
-    res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate')
+    res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate')
     res.setHeader('Content-Type', 'image/svg+xml')
     res.status(200).send(svg)
 }
