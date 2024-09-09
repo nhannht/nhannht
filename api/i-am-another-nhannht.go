@@ -34,7 +34,7 @@ func fetchGithubUserRepoData(username, key string) (int, int, map[string]int, er
 		config = fmt.Sprintf("Bearer %s", key)
 	}
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/users/%s/repos", username), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/users/%s/repos?per_page=100", username), nil)
 	if err != nil {
 		return 0, 0, nil, err
 	}
@@ -140,9 +140,9 @@ func generateCardSVG(stat int, unit string, x, y, width, height float64) string 
         <animate id="cardContainerReveal" attributeName="opacity" from="0" to="1" dur="1s" begin="0s" fill="freeze"/>
     </rect>
     <rect class="cardContainerInner1" x="%f%%" y="%f%%" width="%f%%" height="%f%%" rx="5%%" fill="transparent" stroke="url(#rainbowGradient)" stroke-width="2" stroke-dashoffset="100" stroke-dasharray="150">
-        <animate id="cardContainerInner1StrokeDraw" attributeName="stroke-dashoffset" from="100" to="-200" dur="2s" repeatCount="indefinite"/>
+       <animate id="cardContainerInner1StrokeDraw" attributeName="stroke-dashoffset" from="100" to="-200" dur="2s" repeatCount="indefinite"/>
     </rect>
-    <text class="statNumber" font-family="Ring Bearer" x="%f%%" y="%f%%" text-anchor="middle" alignment-baseline="middle" font-size="60" stroke="url(#rainbowGradient)" fill="transparent" stroke-dasharray="100" stroke-dashoffset="100">
+    <text class="statNumber" font-family="customFont" x="%f%%" y="%f%%" text-anchor="middle" alignment-baseline="middle" font-size="60" stroke="url(#rainbowGradient)" fill="transparent" stroke-dasharray="100" stroke-dashoffset="100">
         %d
         <animate id="strokeDraw" attributeName="stroke-dashoffset" from="100" to="0" dur="2s" fill="freeze" begin="0s"/>
         <animate id="hideStroke" attributeName="stroke" from="url(#mainGradient)" to="transparent" dur="0.5s" fill="freeze" begin="strokeDraw.end"/>
