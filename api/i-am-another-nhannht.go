@@ -257,7 +257,7 @@ func AnotherHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Cache-Control", "s-maxage=600, stale-while-revalidate")
+
 	w.Header().Set("Content-Type", "image/svg+xml")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(svg))
