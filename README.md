@@ -5,9 +5,9 @@
 <h1 align="center">Who am I</h1>
 <div align="center">
 I am nothing who want everything, <br/>
-The one that bear so much sins trying becoming clean. <br/>
+The one that bear so much sins trying to become clean. <br/>
 And if God can not forgive my crimes, <br/>
-Please at least spare all human sins. <br/>
+Please at least spare all human dreams. <br/>
 
 </div>
 
