@@ -13,7 +13,7 @@ import (
 var flower []byte
 
 //go:embed ringbearer.ttf
-var font []byte
+var RingFont []byte
 
 const (
 	width  = 342 + 100
@@ -52,7 +52,7 @@ func WhataHandler(w http.ResponseWriter, r *http.Request) {
 		{Offset: 50, Color: "purple", Opacity: 1},
 		{Offset: 100, Color: "orange", Opacity: 1},
 	})
-	fontBase64 := base64.StdEncoding.EncodeToString(font)
+	fontBase64 := base64.StdEncoding.EncodeToString(RingFont)
 	canvas.Style("text/css", fmt.Sprintf(`
         @font-face {
             font-family: 'customFont';

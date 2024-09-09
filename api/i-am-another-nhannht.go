@@ -1,13 +1,12 @@
 package api
 
 import (
+	_ "embed"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -143,13 +142,13 @@ func generateCardSVG(stat int, unit string, x, y, width, height float64) string 
     <rect class="cardContainerInner1" x="%f%%" y="%f%%" width="%f%%" height="%f%%" rx="5%%" fill="transparent" stroke="url(#rainbowGradient)" stroke-width="2" stroke-dashoffset="100" stroke-dasharray="150">
         <animate id="cardContainerInner1StrokeDraw" attributeName="stroke-dashoffset" from="100" to="-200" dur="2s" repeatCount="indefinite"/>
     </rect>
-    <text class="statNumber" font-family="Black Chancery" x="%f%%" y="%f%%" text-anchor="middle" alignment-baseline="middle" font-size="60" stroke="url(#rainbowGradient)" fill="transparent" stroke-dasharray="100" stroke-dashoffset="100">
+    <text class="statNumber" font-family="Ring Bearer" x="%f%%" y="%f%%" text-anchor="middle" alignment-baseline="middle" font-size="60" stroke="url(#rainbowGradient)" fill="transparent" stroke-dasharray="100" stroke-dashoffset="100">
         %d
         <animate id="strokeDraw" attributeName="stroke-dashoffset" from="100" to="0" dur="2s" fill="freeze" begin="0s"/>
         <animate id="hideStroke" attributeName="stroke" from="url(#mainGradient)" to="transparent" dur="0.5s" fill="freeze" begin="strokeDraw.end"/>
         <animate id="statReveal" attributeName="fill" from="transparent" to="white" dur="1s" fill="freeze" begin="hideStroke.end"/>
     </text>
-    <text class="unit" font-family="Black Chancery" x="%f%%" y="%f%%" font-size="40" opacity="0" text-anchor="middle" alignment-baseline="middle" fill="white">
+    <text class="unit" font-family="customFont" x="%f%%" y="%f%%" RingFont-size="40" opacity="0" text-anchor="middle" alignment-baseline="middle" fill="white">
         %s
         <animate id="unitReveal" attributeName="opacity" from="0" to="1" dur="1s" begin="statReveal.end" fill="freeze"/>
     </text>
@@ -166,7 +165,26 @@ func generateCaroBackground(row, col int) string {
     <animate id="slot%d%dFill" attributeName="fill" from="white" to="rgb(%d,%d,%d)" dur="1.5s" begin="%fs" fill="freeze"/>
     <animate id="slot%d%dStartGlowing" attributeName="fill" from="rgb(%d,%d,%d)" to="white" dur="1s" begin="slot%d%dFill.end + 5s; slot%d%dStartGlowing.end + 5s" fill="freeze"/>
     <animate id="slot%d%dEndGlowing" attributeName="fill" from="white" to="rgb(%d,%d,%d)" dur="1s" begin="slot%d%dStartGlowing.end" fill="freeze"/>
-</rect>`, 100/float64(col), 100/float64(row), r, c, float64(c)*100/float64(col), float64(r)*100/float64(row), r, c, c*100/col, r*100/row, (r+c)*100/(row+col), float64(r+c)/float64(row+col), r, c, c*100/col, r*100/row, (r+c)*100/(row+col), r, c, r, c, r, c, c*100/col, r*100/row, (r+c)*100/(row+col), r, c)
+</rect>`,
+				100/float64(col),            // width of each rect
+				100/float64(row),            // height of each rect
+				r,                           // number of rows, using in rect id
+				c,                           // number of cols, using in rect id
+				float64(c)*100/float64(col), // rect x pos
+				float64(r)*100/float64(row), // rect y pos
+				// init each rect, it happend only 1 time
+				r, c, // r-c for rect id
+				c*255/col, r*255/row, (r+c)*255/(row+col), // rect radient color "from"
+				float64(r+c)/float64(row+col), // begin to init fill
+				// glowing effect
+				r, c, // r-c for id
+				c*100/col, r*100/row, (r+c)*100/(row+col), // rect radient color "from"
+				r, c, // id
+				r, c, // id
+				// end glowing and recover the basic fill
+				r, c, //id
+				c*255/col, r*255/row, (r+c)*255/(row+col), // rect radient color "from"
+				r, c) // id
 			result.WriteString(slot)
 		}
 	}
@@ -174,12 +192,8 @@ func generateCaroBackground(row, col int) string {
 }
 
 func generateSVG(stars, issues, commits, repos, followers int, languages map[string]int) (string, error) {
-	fontPath := filepath.Join("public", "blackchancery64")
-	font, err := ioutil.ReadFile(fontPath)
-	if err != nil {
-		return "", err
-	}
-	fontBase64 := base64.StdEncoding.EncodeToString(font)
+
+	fontBase64 := base64.StdEncoding.EncodeToString(RingFont)
 
 	return fmt.Sprintf(`
 <svg id="banner" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -203,7 +217,7 @@ func generateSVG(stars, issues, commits, repos, followers int, languages map[str
         </linearGradient>
         <style>
             @font-face {
-                font-family: "Black Chancery";
+                font-family: "customFont";
                 src: url(data:font/ttf;charset=utf-8;base64,%s) format("truetype");
             }
         </style>
@@ -232,7 +246,13 @@ func generateSVG(stars, issues, commits, repos, followers int, languages map[str
         %s
         %s
     </g>
-</svg>`, fontBase64, generateCaroBackground(20, 20), generateCardSVG(repos, "repos", 7.5, 10, 35, 20), generateCardSVG(followers, "folks", 7.5, 40, 35, 20), generateCardSVG(stars, "stars", 7.5, 70, 35, 20), generateCardSVG(commits, "commits", 57.5, 10, 35, 35), generateCardSVG(issues, "issues", 57.5, 55, 35, 35)), nil
+</svg>`, fontBase64,
+		generateCaroBackground(20, 20),
+		generateCardSVG(repos, "repos", 7.5, 10, 35, 20),
+		generateCardSVG(followers, "NhanGazers", 7.5, 40, 35, 20),
+		generateCardSVG(stars, "Nhan-have-little-Stars", 7.5, 70, 35, 20),
+		generateCardSVG(commits, "commits", 57.5, 10, 35, 35),
+		generateCardSVG(issues, "issues", 57.5, 55, 35, 35)), nil
 }
 
 func AnotherHandler(w http.ResponseWriter, r *http.Request) {
