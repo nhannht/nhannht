@@ -2,6 +2,8 @@ package api
 
 import (
 	_ "embed"
+	"encoding/base64"
+	"fmt"
 	svg "github.com/ajstarks/svgo"
 	"net/http"
 	"strings"
@@ -9,6 +11,9 @@ import (
 
 //go:embed flower-and-so-called-feather.svg
 var flower []byte
+
+//go:embed ringbearer.ttf
+var font []byte
 
 const (
 	width  = 342 + 100
@@ -47,14 +52,26 @@ func WhataHandler(w http.ResponseWriter, r *http.Request) {
 		{Offset: 50, Color: "purple", Opacity: 1},
 		{Offset: 100, Color: "orange", Opacity: 1},
 	})
+	fontBase64 := base64.StdEncoding.EncodeToString(font)
+	canvas.Style("text/css", fmt.Sprintf(`
+        @font-face {
+            font-family: 'customFont';
+            src: url(data:font/ttf;base64,%s) format('truetype');
+        }
+    `, fontBase64))
 
 	canvas.DefEnd()
 
 	// add text
-	canvas.Text(width/2, height-50, "Believe nothing, no matter where you read it", "text-anchor:middle; font-size:16px; fill:url(#gradient)")
-	canvas.Text(width/2, height-35, "or who said it,", "text-anchor:middle; font-size:16px; fill:url(#gradient)")
-	canvas.Text(width/2, height-20, "no matter if I have said it", "text-anchor:middle; font-size:16px; fill:url(#gradient)")
-	canvas.Text(width/2, height-5, "unless it agrees with your own reason and your own common sense.", "text-anchor:middle; font-size:16px; fill:url(#gradient)")
+	canvas.Gstyle("font-family:customFont; text-anchor:middle; fill:url(#gradient); font-size:12px")
+
+	canvas.Text(width/2, height-80, "Believe nothing, no matter where you read it")
+	canvas.Text(width/2, height-65, "or who said it,")
+	canvas.Text(width/2, height-50, "no matter if I have said it")
+	canvas.Text(width/2, height-35, "unless it agrees with your own reason")
+	canvas.Text(width/2, height-20, "and your own common sense.")
+	canvas.Gend()
+	canvas.Text(width/2, height-5, "\"Buddha\"", "text-anchor:middle; font-size:8px;font-style:italic")
 	// Close the canvas
 	canvas.End()
 

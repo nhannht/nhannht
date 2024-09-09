@@ -7,7 +7,7 @@ import (
 
 func main() {
 
-	http.HandleFunc("/api/scrollaround", api.WhataHandler)
+	http.HandleFunc("/api/scroll-around-and-around", api.WhataHandler)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
