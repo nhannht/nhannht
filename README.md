@@ -1,21 +1,22 @@
-<div align="center">
-<img src="https://nhannht.vercel.app/api/scroll-around-and-around" style="display: block; margin: auto;">
-</div>
+<!--
+    You're reading the source. Respect.
 
-[//]: # (<div align="center">)
+    This README is not a README. It's a /dev/tty
+    masquerading as documentation. If you got here
+    by clicking "Raw", you already mass more than
+    most of my GitHub followers combined.
 
-[//]: # ()
-[//]: # (I am Nhannht)
+    There is no easter egg. The easter egg is that
+    there is no easter egg.
 
-[//]: # ()
-[//]: # (</div>)
-
-<br/>
-<br/>
-
-
-
+    PGP: don't bother. I don't trust myself either.
+-->
 
 <div align="center">
-<img src="https://nhannht.vercel.app/api/i-am-another-nhannht" style="display: block; margin: auto;">
+<img src="https://nhannht-api.fishcmus.io.vn/api/grub" alt="GRUB bootloader">
+<img src="https://nhannht-api.fishcmus.io.vn/api/banner" alt="nhannht banner">
+<img src="https://nhannht-api.fishcmus.io.vn/api/stats" alt="GitHub stats">
+<img src="https://nhannht-api.fishcmus.io.vn/api/projects" alt="Active projects">
+<img src="https://nhannht-api.fishcmus.io.vn/api/starred" alt="Top starred repos">
+<img src="https://nhannht-api.fishcmus.io.vn/api/entropy" alt="System entropy">
 </div>
