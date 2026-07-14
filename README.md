@@ -13,10 +13,5 @@
 -->
 
 <div align="center">
-<img src="https://nhannht-api.fishcmus.io.vn/api/grub" alt="GRUB bootloader">
-<img src="https://nhannht-api.fishcmus.io.vn/api/banner" alt="nhannht banner">
-<img src="https://nhannht-api.fishcmus.io.vn/api/stats" alt="GitHub stats">
-<img src="https://nhannht-api.fishcmus.io.vn/api/projects" alt="Active projects">
-<img src="https://nhannht-api.fishcmus.io.vn/api/starred" alt="Top starred repos">
-<img src="https://nhannht-api.fishcmus.io.vn/api/entropy" alt="System entropy">
+<img src="https://nhannht-api.fishcmus.io.vn/api/card" alt="nhannht - momentum, projects, open source, languages, certifications, education, awards" width="904">
 </div>
